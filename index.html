@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather-App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/77e845fb20.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-image: url(./wallpaper-weather-.jpg);
+            height: 100%;
+        }
+
+        #inp {
+            width: 50%;
+            text-align: center;
+        }
+
+        .output {
+            background-color: rgba(241, 241, 243, 0.521);
+            height: 400px;
+            width: 30%;
+            /* margin-top: 20px;
+            margin-left: 480px; */
+            border-radius: 10px;
+        }
+        
+        .first{
+            width: 50%;
+        }
+        .out{
+            width: 85%;
+        }
+        @media (max-width:400px){
+            .first{
+            width: 100%;
+        }
+            .body{
+                width: 100%;
+            }
+            .output{
+                width: 100%;
+            }
+            .out{
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h3 class="text-center text-white mt-3">Weather-App</h3>
+        <div class="first container mt-3">
+            <form action="">
+                <center>
+                    <input type="search" class="form-control me-2" placeholder="ENTER LOCATION" id="inp"
+                        aria-label="search">
+                    <button onclick="SearchLoc()" type="button"
+                        class="text-white btn btn-outline-info mt-3 w-25 p-2">search</button>
+                </center>
+            </form>
+        </div>
+        <div class="out container">
+    <div class="output container" id="output1">
+    </div>
+</div>
+</body>
+<script>
+    successCallback = (position) => {
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lon=${lon}&lat=${lat}&appid=b41ec3be35c7dac8aabbc21ba253137a`).then(data => data.json()).then(data => displayData(data))
+
+    };
+    navigator.geolocation.getCurrentPosition(successCallback);
+    function SearchLoc() {
+        destination = inp.value
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${destination}&appid=b41ec3be35c7dac8aabbc21ba253137a`).then(data => data.json()).then(data => displayData(data))
+        console.log(destination);
+    }
+    function displayData(locdata) {
+        loc = locdata.name
+        temper = Math.round(((locdata.main.temp) - 273))
+        press = Math.round(((locdata.main.pressure) - 273))
+        humi = Math.round(((locdata.main.humidity) - 273))
+        mintemp = Math.round(((locdata.main.temp_min) - 273))
+        maxtemp = Math.round(((locdata.main.temp_max) - 273))
+        feeling = Math.round(((locdata.main.feels_like) - 273))
+        visib = locdata.visibility / 1000
+        icon = locdata.weather[0].icon
+
+        output1.innerHTML = `
+        <div class="text-center text-dark">
+         <h2 class="text-center mt-3"><b>${loc}</b></h2>
+         <img src="https://openweathermap.org/img/w/${icon}.png">
+                  <b class="text-center ms-1 text-dark" style="font-size: xx-large;">33°C</b>
+         <p class="text-center">Min-temp :    
+            <b>${mintemp}°C</b>
+         
+         <span class="text-center ms-3">
+              Max-temp :
+            <b>${maxtemp}°C</b></span>
+         </p>
+         <hr class="text-dark">
+         <button type="button" class="btn p-2 text-dark" style="height: 55px;">Humidity <b>${humi}%</b></button><br>
+         <button type="button" class="btn p-2 text-dark" style="height: 55px;">Pressure <b>${press}hpa</b></button><br>
+         <button type="button" class="btn p-2 text-dark" style="height: 55px;">Feels-like <b>${feeling}°C</b></button><br>
+         <button type="button" class="btn p-2 text-dark" style="height: 55px;">visibility <b>${visib}°C</b></button>
+        </div>
+    
+
+        `
+
+    }
+</script>
+
+</html>
